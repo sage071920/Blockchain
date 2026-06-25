@@ -4,15 +4,16 @@ import hashlib
 
 
 class Transaction:
-    def __init__(self, sender: str | None, recipient: str, amount: float):
+    def __init__(self, sender: str | None, recipient: str, amount: float, asset: str = "CASH"):
         self.sender = sender
+        self.asset = asset
         self.recipient = recipient
         self.amount = amount
         self.signature: str | None = None
 
     def transaction_hash(self) -> str:
 
-        trans_str = f"{self.sender}{self.recipient}{self.amount}"
+        trans_str = f"{self.sender}{self.recipient}{self.amount}{self.asset}"
 
         trans_bin = trans_str.encode()
 
@@ -40,5 +41,6 @@ class Transaction:
             "sender": self.sender,
             "recipient": self.recipient,
             "amount": self.amount,
-            "signature": self.signature,
+            "asset": self.asset,
+            "signature": self.signature
         }
