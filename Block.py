@@ -9,7 +9,7 @@ class Block:
     def __init__(self, index: int, transactions: list[Transaction], previous_hash: str):
         self.index = index
         self.timestamp = time.time()
-        self.transactions = transactions
+        self.transactions = list(transactions)
         self.previous_hash = previous_hash
         self.nonce = 0
         self.hash = self.compute_hash()

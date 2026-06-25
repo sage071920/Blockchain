@@ -2,7 +2,7 @@ import hashlib
 
 class Transaction:
 
-    def __init__(self):
+    def __init__(self, sender: str | None, recipient: str, amount: float):
         pass
 
     def to_dict(self):
