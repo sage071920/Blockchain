@@ -10,11 +10,13 @@ class Blockchain:
         self.create_genesis_block()
 
 
-    def get_balance(self, address: str) -> float:
+    def get_balance(self, address: str, asset: str = "CASH") -> float:
 
         amount = 0.0
         for block in self.chain:
             for transaction in block.transactions:
+                if transaction.asset != asset:
+                    continue
                 if transaction.sender == address:
                     amount -= transaction.amount
                 if transaction.recipient == address:
