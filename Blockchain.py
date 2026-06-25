@@ -9,20 +9,46 @@ class Blockchain:
         self.difficulty = difficulty
         self.create_genesis_block()
 
+
+    def get_balance(self, address: str) -> float:
+
+        amount = 0.0
+        for block in self.chain:
+            for transaction in block.transactions:
+                if transaction.sender == address:
+                    amount -= transaction.amount
+                if transaction.recipient == address:
+                    amount += transaction.amount
+
+        return amount
+
+
     def create_genesis_block(self) -> None:
 
         self.chain.append(Block(0, [], "0"))
+
 
     def latest_block(self) -> Block:
 
         return self.chain[-1]
 
-    def add_transaction(self, tx: Transaction) -> None:
 
-        if tx.is_valid():
-            self.pending.append(tx)
-        else:
+    def add_transaction(self, tx: Transaction) -> None:
+        if not tx.is_valid():
             raise ValueError("Transaction is not valid")
+        if tx.amount <= 0:
+            raise ValueError("Amount must be positive")
+        if tx.recipient == tx.sender:
+            raise ValueError("Sender and recipient are the same")
+        if tx.sender is not None and self.get_balance(tx.sender) < tx.amount:
+            raise ValueError("Insufficient balance")
+        self.pending.append(tx)
+
+
+    def fund(self, address: str, amount: float) -> None:
+        tx = Transaction(sender = None, recipient = address, amount = amount)
+        self.add_transaction(tx)
+
 
     def mine_pending(self, miner_address: str) -> Block:
 
