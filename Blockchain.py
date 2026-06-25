@@ -42,13 +42,13 @@ class Blockchain:
             raise ValueError("Amount must be positive")
         if tx.recipient == tx.sender:
             raise ValueError("Sender and recipient are the same")
-        if tx.sender is not None and self.get_balance(tx.sender) < tx.amount:
+        if tx.sender is not None and self.get_balance(tx.sender, tx.asset) < tx.amount:
             raise ValueError("Insufficient balance")
         self.pending.append(tx)
 
 
-    def fund(self, address: str, amount: float) -> None:
-        tx = Transaction(sender = None, recipient = address, amount = amount)
+    def fund(self, address: str, amount: float, asset: str = "CASH") -> None:
+        tx = Transaction(sender = None, recipient = address, amount = amount, asset=asset)
         self.add_transaction(tx)
 
 
