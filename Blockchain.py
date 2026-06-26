@@ -10,18 +10,26 @@ class Blockchain:
         self.create_genesis_block()
 
 
-    def get_balance(self, address: str, asset: str = "CASH") -> float:
+    def get_balance(self, address: str, asset: str = "CASH", include_pending: bool = False) -> float:
 
         amount = 0.0
+
+        transactions = []
+
         for block in self.chain:
             for transaction in block.transactions:
-                if transaction.asset != asset:
-                    continue
-                if transaction.sender == address:
-                    amount -= transaction.amount
-                if transaction.recipient == address:
-                    amount += transaction.amount
+                transactions.append(transaction)
 
+        if include_pending:
+            transactions += self.pending
+
+        for t in transactions:
+            if t.asset != asset:
+                continue
+            if t.sender == address:
+                amount -= t.amount
+            if t.recipient == address:
+                amount += t.amount
         return amount
 
 
@@ -42,7 +50,7 @@ class Blockchain:
             raise ValueError("Amount must be positive")
         if tx.recipient == tx.sender:
             raise ValueError("Sender and recipient are the same")
-        if tx.sender is not None and self.get_balance(tx.sender, tx.asset) < tx.amount:
+        if tx.sender is not None and self.get_balance(tx.sender, tx.asset, include_pending=True) < tx.amount:
             raise ValueError("Insufficient balance")
         self.pending.append(tx)
 
