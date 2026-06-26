@@ -14,7 +14,7 @@ class Exchange:
         price = trade["price"]
         quantity = trade["quantity"]
 
-        if self.blockchain.get_balance(buyer, "CASH") >= price*quantity and self.blockchain.get_balance(seller, "STOCK") >= quantity:
+        if self.blockchain.get_balance(buyer, "CASH", include_pending=True) >= price*quantity and self.blockchain.get_balance(seller, "STOCK", include_pending=True) >= quantity:
             cash_transaction = Transaction(sender=buyer, recipient=seller, amount=price*quantity, asset="CASH")
             buyer_wallet.sign_transaction(cash_transaction)
             stock_transaction = Transaction(sender=seller, recipient=buyer, amount=quantity, asset="STOCK")
@@ -38,10 +38,10 @@ class Exchange:
 
         for trade in new_trades:
 
-            käufer_wallet = self.wallets[trade["buyer"]]
-            verkäufer_wallet = self.wallets[trade["seller"]]
+            kaeufer_wallet = self.wallets[trade["buyer"]]
+            verkaeufer_wallet = self.wallets[trade["seller"]]
 
-            self.settle_trade(trade, käufer_wallet, verkäufer_wallet)
+            self.settle_trade(trade, kaeufer_wallet, verkaeufer_wallet)
 
     def place_market_order(self, owner, side, quantity) -> None:
 
@@ -51,7 +51,7 @@ class Exchange:
 
         for trade in new_trades:
 
-            käufer_wallet = self.wallets[trade["buyer"]]
-            verkäufer_wallet = self.wallets[trade["seller"]]
+            kaeufer_wallet = self.wallets[trade["buyer"]]
+            verkaeufer_wallet = self.wallets[trade["seller"]]
 
-            self.settle_trade(trade, käufer_wallet, verkäufer_wallet)
+            self.settle_trade(trade, kaeufer_wallet, verkaeufer_wallet)
