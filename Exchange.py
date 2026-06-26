@@ -2,8 +2,10 @@ from Transaction import Transaction
 
 
 class Exchange:
-    def __init__(self, blockchain):
+    def __init__(self, blockchain, order_book):
         self.blockchain = blockchain
+        self.order_book = order_book
+        self.wallets = {}
 
     def settle_trade(self, trade, buyer_wallet, seller_wallet) -> None:
 
@@ -23,3 +25,20 @@ class Exchange:
 
         else:
             raise ValueError("Insufficient balance for trade settlement")
+
+
+    def register(self, wallet) -> None:
+        self.wallets[wallet.public_key] = wallet
+
+
+    def place_order(self, order) -> None:
+        before = len(self.order_book.trades)
+        self.order_book.place_limit_order(order)
+        new_trades = self.order_book.trades[before:]
+
+        for trade in new_trades:
+
+            käufer_wallet = self.wallets[trade["buyer"]]
+            verkäufer_wallet = self.wallets[trade["seller"]]
+
+            self.settle_trade(trade, käufer_wallet, verkäufer_wallet)
