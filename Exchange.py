@@ -31,9 +31,22 @@ class Exchange:
         self.wallets[wallet.public_key] = wallet
 
 
-    def place_order(self, order) -> None:
+    def place_limit_order(self, order) -> None:
         before = len(self.order_book.trades)
         self.order_book.place_limit_order(order)
+        new_trades = self.order_book.trades[before:]
+
+        for trade in new_trades:
+
+            käufer_wallet = self.wallets[trade["buyer"]]
+            verkäufer_wallet = self.wallets[trade["seller"]]
+
+            self.settle_trade(trade, käufer_wallet, verkäufer_wallet)
+
+    def place_market_order(self, owner, side, quantity) -> None:
+
+        before = len(self.order_book.trades)
+        self.order_book.place_market_order(owner, side, quantity)
         new_trades = self.order_book.trades[before:]
 
         for trade in new_trades:
