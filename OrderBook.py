@@ -19,13 +19,16 @@ class OrderBook:
 
         return max(self.bids, key=lambda x: x.price, default=None)
 
+
     def best_ask(self):
 
         return min(self.asks, key=lambda x: x.price, default=None)
 
+
     def _record_trade(self, buyer, seller, price, quantity):
         self.trades.append({"buyer": buyer, "seller": seller, "price": price, "quantity": quantity})
         self.last_price = price
+
 
     def place_limit_order(self, order: Order) -> None:
         if order.side == "buy":
@@ -71,4 +74,18 @@ class OrderBook:
                 self.asks.append(order)
 
 
+    def place_market_order(self, owner, side, quantity) -> None:
+        if side == "buy":
+            price = float("inf")
+        elif side == "sell":
+            price = float("-inf")
+
+        order = Order(owner, side, price, quantity)
+
+        self.place_limit_order(order)
+
+        if order in self.bids:
+            self.bids.remove(order)
+        elif order in self.asks:
+            self.asks.remove(order)
 
